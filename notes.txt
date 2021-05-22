@@ -1,4 +1,4 @@
-xfreerdp /u:admin /p:password /size:1366x768 /cert:ignore /v:10.10.46.154
+xfreerdp /u:admin /p:password /size:1366x768 /cert:ignore /v:10.10.172.51
 -------
 Step 1 - FUZZING
 -------
@@ -21,7 +21,9 @@ python3 2.ControlEIP.py3
 --
 
 run 
-!mona findmsp -distance 2000
+--
+!mona findmsp -distance 700
+--
 inside ID
 Log data, item 19
  Address=0BADF00D
